@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TodoList.Data;
+using TodoList.Models;
 
 namespace TodoList
 {
@@ -13,7 +16,36 @@ namespace TodoList
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+
+            #region 預塞測資
+            using(var scope = host.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<TodoListContext>();
+
+                context.TodoModel.AddRange(
+                    new TodoModel
+                    {
+                        Id = 1,
+                        Title = "保養汽車",
+                        Description = "換機油",
+                        CreateDate = DateTime.Now,
+                        ModifyDate = DateTime.Now
+                    },
+                    new TodoModel
+                    {
+                        Id = 2,
+                        Title = "準備晚餐",
+                        Description = "豬排、燙青菜",
+                        CreateDate = DateTime.Now,
+                        ModifyDate = DateTime.Now
+                    });
+
+                context.SaveChanges();
+            }
+            #endregion
+
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
