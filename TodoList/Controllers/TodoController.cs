@@ -58,6 +58,9 @@ namespace TodoList.Controllers
         {
             if (ModelState.IsValid)
             {
+                todoModel.CreateDate = DateTime.Now;
+                todoModel.ModifyDate = DateTime.Now;
+
                 _context.Add(todoModel);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -97,6 +100,7 @@ namespace TodoList.Controllers
             {
                 try
                 {
+                    todoModel.ModifyDate = DateTime.Now;
                     _context.Update(todoModel);
                     await _context.SaveChangesAsync();
                 }
